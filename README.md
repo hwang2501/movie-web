@@ -27,6 +27,8 @@
 docker compose up -d
 ```
 
+*(Postgres: 5434, Redis: 6381 - tránh conflict với project khác)*
+
 ### 3. Backend
 
 ```powershell
