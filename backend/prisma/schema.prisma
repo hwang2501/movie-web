@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      Role     @default(MEMBER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  refreshTokens RefreshToken[]
+  favorites     Favorite[]
+  watchHistory  WatchHistory[]
+  comments      Comment[]
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  hash      String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+}
+
+model Movie {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  description String?
+  thumbnail   String?
+  year        Int?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  episodes    Episode[]
+  favorites   Favorite[]
+  comments    Comment[]
+}
+
+model Episode {
+  id        String   @id @default(cuid())
+  movieId   String
+  movie     Movie    @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  number    Int
+  title     String?
+  hlsPath   String
+  duration  Int?     // seconds
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  watchHistory WatchHistory[]
+
+  @@unique([movieId, number])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  movieId   String
+  movie     Movie    @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([movieId])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  movieId   String
+  movie     Movie    @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, movieId])
+}
+
+model WatchHistory {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  episodeId  String
+  episode    Episode  @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  progress   Int      // seconds watched
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, episodeId])
+}
