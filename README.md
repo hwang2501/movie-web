@@ -1,62 +1,74 @@
-# Movie Web
+Movie Web
 
-Đồ án web xem phim - Next.js + NestJS + PostgreSQL + Redis.
+Ứng dụng web xem phim được xây dựng với Next.js (Frontend) và NestJS (Backend).
+Hệ thống hỗ trợ video streaming, quản lý phim và tối ưu hiệu năng bằng Redis.
 
-## Links
+Links
 
-- **GitHub**: https://github.com/hwang2501/movie-web.git
-- **Jira Plan**: \<paste_here\> *(dán link Jira nếu có)*
+GitHub: https://github.com/hwang2501/movie-web
 
-## Tech Stack
+Tech Stack
 
-- **Backend**: NestJS, TypeScript, Prisma, PostgreSQL
-- **Frontend**: Next.js, TypeScript
-- **Cache/Rate limit**: Redis
-- **Realtime**: Socket.IO
+Backend
 
-## Hướng dẫn chạy (Windows)
+NestJS
 
-### 1. Chuẩn bị môi trường
+TypeScript
 
-- Cài đặt [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- Node.js 18+ và npm/pnpm
+Prisma ORM
 
-### 2. Khởi động Postgres + Redis
+PostgreSQL
 
-```powershell
+Frontend
+
+Next.js
+
+TypeScript
+
+Infrastructure
+
+Redis (Cache / Rate Limiting)
+
+Socket.IO (Realtime)
+
+Docker Compose (Local environment)
+
+Setup & Run (Windows)
+1. Requirements
+
+Docker Desktop
+
+Node.js 18+
+
+npm hoặc pnpm
+
+2. Start PostgreSQL & Redis
 docker compose up -d
-```
 
-*(Postgres: 5434, Redis: 6381 - tránh conflict với project khác)*
+Ports used:
 
-### 3. Backend
+PostgreSQL → 5434
 
-```powershell
+Redis → 6381
+
+(Ports được đổi để tránh conflict với project khác)
+
+3. Run Backend
 cd backend
 copy .env.example .env
 npm install
 npx prisma migrate dev
 npx prisma db seed
 npm run start:dev
-```
 
-### 4. Frontend
+Backend chạy tại:
 
-```powershell
+http://localhost:3001
+4. Run Frontend
 cd frontend
 npm install
 npm run dev
-```
 
-- Backend: http://localhost:3001  
-- Frontend: http://localhost:3000
+Frontend chạy tại:
 
-## Cấu trúc
-
-```
-movie-web/
-├── backend/      # NestJS API
-├── frontend/     # Next.js app
-├── docs/         # Tài liệu, plan, demo script
-└── docker-compose.yml
-```
+http://localhost:3000
