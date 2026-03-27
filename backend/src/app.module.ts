@@ -1,3 +1,5 @@
+import { existsSync } from 'fs';
+import { join } from 'path';
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler';
@@ -13,12 +15,22 @@ import { EpisodesModule } from './episodes/episodes.module';
 import { CommentsModule } from './comments/comments.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from './cache/cache.module';
+import { FavoritesModule } from './favorites/favorites.module';
+import { WatchHistoryModule } from './watch-history/watch-history.module';
+import { GenresModule } from './genres/genres.module';
+
+/** Nạp .env khi chạy từ `backend/` hoặc từ thư mục gốc repo (`backend/.env`). */
+const envFileCandidates = [
+  join(process.cwd(), '.env'),
+  join(process.cwd(), 'backend', '.env'),
+];
+const envFilePath = envFileCandidates.filter((p) => existsSync(p));
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: envFilePath.length > 0 ? envFilePath : ['.env'],
     }),
     ThrottlerModule.forRoot([
       { name: 'short', ttl: 1000, limit: 3 },
@@ -32,6 +44,9 @@ import { CacheModule } from './cache/cache.module';
     MoviesModule,
     EpisodesModule,
     CommentsModule,
+    FavoritesModule,
+    WatchHistoryModule,
+    GenresModule,
   ],
   controllers: [AppController],
   providers: [

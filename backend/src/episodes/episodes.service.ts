@@ -1,10 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class EpisodesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private config: ConfigService,
+  ) {}
 
   async findByMovie(movieId: string) {
     return this.prisma.episode.findMany({
@@ -57,5 +62,24 @@ export class EpisodesService {
   async remove(id: string) {
     await this.findOne(id);
     return this.prisma.episode.delete({ where: { id } });
+  }
+
+  async getStreamUrl(id: string, userId: string | null = null) {
+    const ep = await this.findOne(id);
+    const uid = userId ?? 'guest';
+    const expiresAt = Math.floor(Date.now() / 1000) + 10 * 60;
+    const secret = this.config.get<string>('STREAM_SIGNING_SECRET') || 'dev-stream-secret';
+    const payload = `${uid}:${id}:${expiresAt}`;
+    const signature = crypto
+      .createHmac('sha256', secret)
+      .update(payload)
+      .digest('hex');
+
+    return {
+      episodeId: ep.id,
+      expiresAt,
+      // In production, this should point to signed CDN/object-storage URL.
+      streamUrl: `${ep.hlsPath}?uid=${encodeURIComponent(uid)}&exp=${expiresAt}&sig=${signature}`,
+    };
   }
 }

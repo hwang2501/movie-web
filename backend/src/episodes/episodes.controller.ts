@@ -23,6 +23,12 @@ export class EpisodesController {
     return this.episodes.findByMovie(movieId);
   }
 
+  /** Công khai: xem phim không bắt buộc đăng nhập (ký URL với uid=guest). Đặt trước :id để khớp đường dẫn rõ ràng. */
+  @Get(':id/stream-url')
+  getStreamUrl(@Param('id') id: string) {
+    return this.episodes.getStreamUrl(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.episodes.findOne(id);

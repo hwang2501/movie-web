@@ -1,26 +1,65 @@
 @import "tailwindcss";
 
+/* Chủ đạo: nền tối phẳng, tag xanh, CTA đỏ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0d0f12;
+  --foreground: #e8eaed;
+  --surface: #161a20;
+  --surface-elevated: #1e232b;
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --accent: #dc2626;
+  --accent-hover: #ef4444;
+  --accent-bright: #f87171;
+  --accent-muted: rgba(220, 38, 38, 0.12);
+  --tag-green: #22c55e;
+  --tag-green-dim: rgba(34, 197, 94, 0.18);
+  --tag-gold: #fbbf24;
+  --ring-glow: rgba(220, 38, 38, 0.35);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  background-image: none;
+  min-height: 100dvh;
+}
+
+::selection {
+  background: var(--tag-green-dim);
+  color: #fff;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--tag-green) !important;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0f12;
+}
+::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
 }

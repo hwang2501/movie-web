@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -19,8 +20,13 @@ export class MoviesController {
   constructor(private movies: MoviesService) {}
 
   @Get()
-  findAll() {
-    return this.movies.findAll();
+  findAll(
+    @Query('q') q?: string,
+    @Query('genre') genre?: string,
+    @Query('country') country?: string,
+    @Query('year') year?: string,
+  ) {
+    return this.movies.findAll({ q, genre, country, year });
   }
 
   @Get('by-slug/:slug')
@@ -54,7 +60,16 @@ export class MoviesController {
   @Roles(Role.ADMIN)
   update(
     @Param('id') id: string,
-    @Body() body: { title?: string; slug?: string; description?: string; thumbnail?: string; year?: number },
+    @Body()
+    body: {
+      title?: string;
+      slug?: string;
+      description?: string | null;
+      thumbnail?: string | null;
+      year?: number | null;
+      country?: string | null;
+      genreIds?: string[];
+    },
   ) {
     return this.movies.update(id, body);
   }

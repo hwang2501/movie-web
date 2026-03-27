@@ -15,9 +15,12 @@ enum Role {
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
-  password  String
+  password  String?
+  googleId  String?  @unique
   name      String?
+  imageUrl  String?
   role      Role     @default(MEMBER)
+  locked    Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -37,12 +40,33 @@ model RefreshToken {
   createdAt DateTime @default(now())
 }
 
+model Genre {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  movies MovieGenre[]
+}
+
+model MovieGenre {
+  movieId String
+  genreId String
+  movie   Movie  @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  genre   Genre  @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@id([movieId, genreId])
+  @@index([genreId])
+}
+
 model Movie {
   id          String    @id @default(cuid())
   title       String
   slug        String    @unique
   description String?
   thumbnail   String?
+  country     String?
   year        Int?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -50,6 +74,7 @@ model Movie {
   episodes    Episode[]
   favorites   Favorite[]
   comments    Comment[]
+  genres      MovieGenre[]
 }
 
 model Episode {
